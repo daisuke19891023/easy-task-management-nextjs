@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://my_task_manager_user:my_task_manager_password@db:3306/my_task_manager
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: my_task_manager
+      MYSQL_USER: my_task_manager_user
+      MYSQL_PASSWORD: my_task_manager_password
+      MYSQL_ROOT_PASSWORD: my_task_manager_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: my_task_manager_user
+      PMA_PASSWORD: my_task_manager_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+volumes:
+  db-data:

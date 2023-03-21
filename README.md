@@ -1,1 +1,0 @@
-# easy-task-management-nextjs
